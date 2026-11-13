@@ -1,125 +1,688 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0b1425">
-<title>BLACKWELL ONE | Employee Portal</title>
+<title>BLACKWELL ONE</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#081323,#122744,#091321);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center}
-.container{width:390px;max-width:92%;padding:40px;background:#101e32;border:1px solid #294362;border-radius:18px;box-shadow:0 25px 80px #0008}
-.brand{text-align:center;margin-bottom:35px}
-.logo{font-size:29px;font-weight:800;letter-spacing:3px}
-.subtitle{color:#8fa9c8;font-size:11px;letter-spacing:3px;margin-top:9px}
-h2{font-size:21px;margin-bottom:8px}
-.description{color:#91a6bf;font-size:13px;margin-bottom:25px}
-label{display:block;font-size:12px;color:#b8c9dc;margin:17px 0 8px}
-input{width:100%;padding:14px;background:#091525;border:1px solid #294362;border-radius:8px;color:white;outline:none}
-input:focus{border-color:#64aaff}
-button{width:100%;padding:14px;background:#2674c9;color:white;border:0;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:22px}
-button:hover{background:#348ce8}
-.switch{text-align:center;color:#91a6bf;font-size:13px;margin-top:22px}
-.switch a{color:#65adff;cursor:pointer}
-.footer{text-align:center;color:#536b88;font-size:10px;margin-top:35px;letter-spacing:1px}
-.hidden{display:none}
-#message{font-size:12px;margin-top:15px;color:#8fc5ff;text-align:center}
+:root {
+  --bg: #0b1220;
+  --panel: #121d30;
+  --panel2: #192840;
+  --blue: #4d9cff;
+  --text: #f4f7fc;
+  --muted: #93a4ba;
+  --border: #263650;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button, input { font: inherit; }
+
+button {
+  cursor: pointer;
+}
+
+.hidden { display: none !important; }
+
+/* LOGIN */
+
+#authScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 35px;
+  box-shadow: 0 20px 70px #0005;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: 3px;
+}
+
+.logo span { color: var(--blue); }
+
+.subtitle {
+  color: var(--muted);
+  margin-bottom: 30px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 8px 0;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: #0b1527;
+  color: white;
+}
+
+.primary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--blue);
+  color: white;
+  font-weight: 700;
+}
+
+.switch {
+  color: var(--blue);
+  cursor: pointer;
+  text-align: center;
+  margin-top: 20px;
+}
+
+#authMessage {
+  color: #ff8585;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+/* APPLICATION */
+
+#app {
+  min-height: 100vh;
+  display: flex;
+}
+
+.sidebar {
+  width: 250px;
+  background: #0e192b;
+  border-right: 1px solid var(--border);
+  padding: 25px 15px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.brand {
+  padding: 0 12px 35px;
+}
+
+.brand small {
+  display: block;
+  color: var(--muted);
+  letter-spacing: 3px;
+  margin-top: 5px;
+  font-size: 10px;
+}
+
+.nav-label {
+  color: #64758c;
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 15px 12px 8px;
+}
+
+.nav-btn {
+  width: 100%;
+  border: 0;
+  padding: 12px;
+  margin: 3px 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #aab9cc;
+  text-align: left;
+}
+
+.nav-btn:hover, .nav-btn.active {
+  background: #1b304c;
+  color: white;
+}
+
+.nav-btn.active {
+  border-left: 3px solid var(--blue);
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+  gap: 15px;
+}
+
+.topbar small {
+  color: var(--muted);
+}
+
+.user-pill {
+  background: var(--panel2);
+  padding: 10px 15px;
+  border-radius: 30px;
+  font-size: 13px;
+}
+
+.page-title {
+  font-size: 28px;
+  margin: 0 0 8px;
+}
+
+.page-description {
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.card-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.card-number {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 12px;
+}
+
+.section-title {
+  font-size: 17px;
+  margin-bottom: 18px;
+}
+
+.employee {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #24446b;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.employee-info small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.badge {
+  margin-left: auto;
+  background: #193b32;
+  color: #75dfb4;
+  border-radius: 20px;
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+.notice {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.logout {
+  width: 100%;
+  background: #291e2a;
+  color: #ff9a9a;
+  border: 0;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+@media(max-width:750px) {
+  #app { flex-direction: column; }
+
+  .sidebar {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .brand { padding-bottom: 12px; }
+
+  .nav-label { display: none; }
+
+  .sidebar nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+  }
+
+  .nav-btn {
+    white-space: nowrap;
+    width: auto;
+  }
+
+  .sidebar-bottom { margin-top: 10px; }
+
+  .main { padding: 20px; }
+}
 </style>
 </head>
+
 <body>
-<div class="container">
-<div class="brand">
-<div class="logo">BLACKWELL ONE</div>
-<div class="subtitle">ONE COMPANY. ONE VISION.</div>
+
+<!-- LOGIN -->
+
+<div id="authScreen">
+  <div class="auth-box">
+
+    <div class="logo">BLACKWELL<span>.</span></div>
+    <p class="subtitle">ONE — Company workspace</p>
+
+    <div id="loginForm">
+      <h2>Welcome back.</h2>
+      <p class="subtitle">Log in to your workspace.</p>
+
+      <input id="loginUsername" placeholder="Username">
+      <input id="loginPassword" type="password" placeholder="Password">
+
+      <button class="primary" onclick="login()">Sign in →</button>
+
+      <div class="switch" onclick="showRegister()">
+        Create an account
+      </div>
+    </div>
+
+    <div id="registerForm" class="hidden">
+      <h2>Create account.</h2>
+      <p class="subtitle">Join the BlackWell workspace.</p>
+
+      <input id="regName" placeholder="Full name">
+      <input id="regUsername" placeholder="Username">
+      <input id="regPassword" type="password" placeholder="Password">
+
+      <button class="primary" onclick="register()">Create account →</button>
+
+      <div class="switch" onclick="showLogin()">
+        Back to login
+      </div>
+    </div>
+
+    <div id="authMessage"></div>
+  </div>
 </div>
 
-<div id="login">
-<h2>Welcome back.</h2>
-<div class="description">Sign in to your employee workspace.</div>
-<form id="loginForm">
-<label>Username</label>
-<input id="loginName" required autocomplete="username">
-<label>Password</label>
-<input id="loginPassword" type="password" required autocomplete="current-password">
-<button type="submit">SIGN IN</button>
-</form>
-<div class="switch">New to BlackWell? <a onclick="showRegister()">Create account</a></div>
+<!-- DASHBOARD -->
+
+<div id="app" class="hidden">
+
+  <aside class="sidebar">
+
+    <div class="brand">
+      <div class="logo">BLACKWELL<span>.</span></div>
+      <small>ONE WORKSPACE</small>
+    </div>
+
+    <div class="nav-label">WORKSPACE</div>
+
+    <nav>
+      <button class="nav-btn active" onclick="showPage('overview',this)">⌂ Overview</button>
+      <button class="nav-btn" onclick="showPage('employees',this)">♙ Employees</button>
+      <button class="nav-btn" onclick="showPage('departments',this)">▦ Departments</button>
+      <button class="nav-btn" onclick="showPage('tasks',this)">✓ Tasks</button>
+      <button class="nav-btn" onclick="showPage('messages',this)">✉ Messages</button>
+      <button class="nav-btn" onclick="showPage('calendar',this)">▣ Calendar</button>
+      <button class="nav-btn" onclick="showPage('announcements',this)">◈ Announcements</button>
+    </nav>
+
+    <div id="adminNavigation" class="hidden">
+      <div class="nav-label">MANAGEMENT</div>
+      <button class="nav-btn" onclick="showPage('admin',this)">⚙ Administration</button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="nav-btn" onclick="showPage('settings',this)">⚙ Settings</button>
+      <button class="logout" onclick="logout()">↪ Sign out</button>
+    </div>
+
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <strong>BLACKWELL ONE</strong><br>
+        <small>Company workspace</small>
+      </div>
+
+      <div class="user-pill" id="userPill">Loading...</div>
+    </div>
+
+    <div id="pageContent"></div>
+
+  </main>
 </div>
 
-<div id="register" class="hidden">
-<h2>Create account.</h2>
-<div class="description">Join the BlackWell Group employee network.</div>
-<form id="registerForm">
-<label>Full name</label>
-<input id="fullName" required>
-<label>Username</label>
-<input id="username" required autocomplete="username">
-<label>Password</label>
-<input id="password" type="password" minlength="8" required autocomplete="new-password">
-<button type="submit">CREATE ACCOUNT</button>
-</form>
-<div class="switch">Already registered? <a onclick="showLogin()">Sign in</a></div>
-</div>
+<script>
+const SUPABASE_URL = "https://jlbpczgyjeschedamcvz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jJf6sFbhFEiWHG68A-oztA_adFSDmUQ";
 
-<div id="message"></div>
-<div class="footer">BLACKWELL GROUP © 2026</div>
-</div>
-
-<script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-const supabase = createClient(
-'https://jlbpczgyjeschedamcvz.supabase.co',
-'sb_publishable_jJf6sFbhFEiWHG68A-oztA_adFSDmUQ'
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
 );
 
-const message = document.getElementById('message');
+let currentProfile = null;
 
-window.showRegister=()=>{
-document.getElementById('login').classList.add('hidden');
-document.getElementById('register').classList.remove('hidden');
-message.textContent='';
-};
+function showLogin() {
+  document.getElementById("loginForm").classList.remove("hidden");
+  document.getElementById("registerForm").classList.add("hidden");
+  document.getElementById("authMessage").textContent = "";
+}
 
-window.showLogin=()=>{
-document.getElementById('register').classList.add('hidden');
-document.getElementById('login').classList.remove('hidden');
-message.textContent='';
-};
+function showRegister() {
+  document.getElementById("loginForm").classList.add("hidden");
+  document.getElementById("registerForm").classList.remove("hidden");
+  document.getElementById("authMessage").textContent = "";
+}
 
-document.getElementById('registerForm').addEventListener('submit',async e=>{
-e.preventDefault();
-message.textContent='Creating account...';
+function message(text) {
+  document.getElementById("authMessage").textContent = text;
+}
 
-const fullName=document.getElementById('fullName').value.trim();
-const username=document.getElementById('username').value.trim().toLowerCase();
-const password=document.getElementById('password').value;
+function validUsername(username) {
+  return /^[a-z0-9_]{3,24}$/.test(username);
+}
 
-const email=username+'@accounts.blackwell.local';
+async function register() {
+  const name = document.getElementById("regName").value.trim();
+  const username = document.getElementById("regUsername").value.trim().toLowerCase();
+  const password = document.getElementById("regPassword").value;
 
-const {data,error}=await supabase.auth.signUp({
-email,password,
-options:{data:{full_name:fullName,username}}
+  if (!name || !username || !password) {
+    return message("Fill in all fields.");
+  }
+
+  if (!validUsername(username)) {
+    return message("Username: 3-24 letters, numbers or underscores.");
+  }
+
+  if (password.length < 8) {
+    return message("Use a password of at least 8 characters.");
+  }
+
+  message("Creating account...");
+
+  const { error } = await supabase.auth.signUp({
+    email: username + "@accounts.blackwell.local",
+    password: password,
+    options: {
+      data: {
+        full_name: name,
+        username: username
+      }
+    }
+  });
+
+  if (error) {
+    return message(error.message);
+  }
+
+  message("Account created! You can now sign in.");
+  showLogin();
+}
+
+async function login() {
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  if (!username || !password) {
+    return message("Enter your username and password.");
+  }
+
+  message("Signing in...");
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: username + "@accounts.blackwell.local",
+    password: password
+  });
+
+  if (error) {
+    return message(error.message);
+  }
+
+  await loadDashboard();
+}
+
+async function loadDashboard() {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) return;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id,full_name,username,role,department,job_title,created_at")
+    .eq("id", session.user.id)
+    .single();
+
+  if (error || !data) {
+    message("Your profile could not be loaded. Please contact an administrator.");
+    return;
+  }
+
+  currentProfile = data;
+
+  document.getElementById("authScreen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("userPill").textContent =
+    data.full_name + " · " + data.role;
+
+  document.getElementById("adminNavigation").classList.toggle(
+    "hidden",
+    data.role !== "admin"
+  );
+
+  showPage("overview");
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[char]);
+}
+
+function showPage(page, button) {
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  if (button) button.classList.add("active");
+
+  const content = document.getElementById("pageContent");
+
+  if (page === "overview") {
+    content.innerHTML = `
+      <h1 class="page-title">Good to see you, ${escapeHTML(currentProfile.full_name)}.</h1>
+      <p class="page-description">Welcome to your BlackWell company workspace.</p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-label">Your account</div>
+          <div class="card-number">Active</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Your role</div>
+          <div class="card-number">${escapeHTML(currentProfile.role)}</div>
+        </div>
+        <div class="card">
+          <div class="card-label">Department</div>
+          <div class="card-number" style="font-size:21px">
+            ${escapeHTML(currentProfile.department || "Unassigned")}
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="section-title">Your workspace</h3>
+        <p class="notice">
+          This is the central workspace for BlackWell Group.
+          Your company tools and updates will appear here as they become available.
+        </p>
+      </div>
+    `;
+  }
+
+  else if (page === "employees") {
+    content.innerHTML = `
+      <h1 class="page-title">Employees</h1>
+      <p class="page-description">People in your BlackWell workspace.</p>
+      <div class="card">
+        <div class="section-title">Employee directory</div>
+        <div id="employeeList" class="notice">Loading employees...</div>
+      </div>
+    `;
+    loadEmployees();
+  }
+
+  else if (page === "departments") {
+    content.innerHTML = `
+      <h1 class="page-title">Departments</h1>
+      <p class="page-description">Company structure.</p>
+      <div class="card">
+        <p class="notice">
+          Department management will be connected in the next development phase.
+        </p>
+      </div>
+    `;
+  }
+
+  else if (page === "admin") {
+    if (currentProfile.role !== "admin") return;
+
+    content.innerHTML = `
+      <h1 class="page-title">Administration</h1>
+      <p class="page-description">BlackWell management workspace.</p>
+      <div class="card">
+        <h3>Administrator access</h3>
+        <p class="notice">
+          Welcome to the management area. Administrative tools are being built.
+        </p>
+      </div>
+    `;
+  }
+
+  else {
+    const names = {
+      tasks: "Tasks",
+      messages: "Messages",
+      calendar: "Calendar",
+      announcements: "Announcements",
+      settings: "Settings"
+    };
+
+    content.innerHTML = `
+      <h1 class="page-title">${names[page] || "Workspace"}</h1>
+      <p class="page-description">BlackWell ONE workspace.</p>
+      <div class="card">
+        <p class="notice">
+          This section is not connected yet. It will be added in a future phase.
+        </p>
+      </div>
+    `;
+  }
+}
+
+async function loadEmployees() {
+  const list = document.getElementById("employeeList");
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("full_name,username,role,department,job_title")
+    .order("full_name");
+
+  if (error) {
+    list.textContent = "Could not load employees: " + error.message;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    list.textContent = "No employees registered yet.";
+    return;
+  }
+
+  list.innerHTML = data.map(person => `
+    <div class="employee">
+      <div class="avatar">${escapeHTML((person.full_name || "?").charAt(0).toUpperCase())}</div>
+      <div class="employee-info">
+        <strong>${escapeHTML(person.full_name)}</strong>
+        <small>${escapeHTML(person.job_title || person.department || "Employee")}</small>
+      </div>
+      <span class="badge">${escapeHTML(person.role)}</span>
+    </div>
+  `).join("");
+}
+
+async function logout() {
+  await supabase.auth.signOut();
+  currentProfile = null;
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+  showLogin();
+}
+
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("authScreen").classList.remove("hidden");
+  }
 });
 
-message.textContent=error?error.message:
-'Account created! Check your email if confirmation is required.';
-});
+(async function start() {
+  const { data: { session } } = await supabase.auth.getSession();
 
-document.getElementById('loginForm').addEventListener('submit',async e=>{
-e.preventDefault();
-message.textContent='Signing in...';
-
-const username=document.getElementById('loginName').value.trim().toLowerCase();
-const password=document.getElementById('loginPassword').value;
-
-const {data,error}=await supabase.auth.signInWithPassword({
-email:username+'@accounts.blackwell.local',
-password
-});
-
-message.textContent=error?error.message:'Login successful! Dashboard coming soon.';
-});
+  if (session) {
+    await loadDashboard();
+  }
+})();
 </script>
+
 </body>
 </html>
