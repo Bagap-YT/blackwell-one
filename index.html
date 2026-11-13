@@ -431,6 +431,27 @@ function validUsername(username) {
 }
 
 async function register() {
+  window.login = async function() {
+  const username = document.getElementById("loginUsername").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  if (!username || !password) {
+    return message("Enter your username and password.");
+  }
+
+  message("Signing in...");
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: username + "@accounts.blackwell.local",
+    password: password
+  });
+
+  if (error) {
+    return message(error.message);
+  }
+
+  await loadDashboard();
+};
   const name = document.getElementById("regName").value.trim();
   const username = document.getElementById("regUsername").value.trim().toLowerCase();
   const password = document.getElementById("regPassword").value;
