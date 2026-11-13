@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1425">
+<title>BLACKWELL ONE | Employee Portal</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#081323,#122744,#091321);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center}
+.container{width:390px;max-width:92%;padding:40px;background:#101e32;border:1px solid #294362;border-radius:18px;box-shadow:0 25px 80px #0008}
+.brand{text-align:center;margin-bottom:35px}
+.logo{font-size:29px;font-weight:800;letter-spacing:3px}
+.subtitle{color:#8fa9c8;font-size:11px;letter-spacing:3px;margin-top:9px}
+h2{font-size:21px;margin-bottom:8px}
+.description{color:#91a6bf;font-size:13px;margin-bottom:25px}
+label{display:block;font-size:12px;color:#b8c9dc;margin:17px 0 8px}
+input{width:100%;padding:14px;background:#091525;border:1px solid #294362;border-radius:8px;color:white;outline:none}
+input:focus{border-color:#64aaff}
+button{width:100%;padding:14px;background:#2674c9;color:white;border:0;border-radius:8px;font-weight:bold;cursor:pointer;margin-top:22px}
+button:hover{background:#348ce8}
+.switch{text-align:center;color:#91a6bf;font-size:13px;margin-top:22px}
+.switch a{color:#65adff;cursor:pointer}
+.footer{text-align:center;color:#536b88;font-size:10px;margin-top:35px;letter-spacing:1px}
+.hidden{display:none}
+#message{font-size:12px;margin-top:15px;color:#8fc5ff;text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="brand">
+<div class="logo">BLACKWELL ONE</div>
+<div class="subtitle">ONE COMPANY. ONE VISION.</div>
+</div>
+
+<div id="login">
+<h2>Welcome back.</h2>
+<div class="description">Sign in to your employee workspace.</div>
+<form id="loginForm">
+<label>Username</label>
+<input id="loginName" required autocomplete="username">
+<label>Password</label>
+<input id="loginPassword" type="password" required autocomplete="current-password">
+<button type="submit">SIGN IN</button>
+</form>
+<div class="switch">New to BlackWell? <a onclick="showRegister()">Create account</a></div>
+</div>
+
+<div id="register" class="hidden">
+<h2>Create account.</h2>
+<div class="description">Join the BlackWell Group employee network.</div>
+<form id="registerForm">
+<label>Full name</label>
+<input id="fullName" required>
+<label>Username</label>
+<input id="username" required autocomplete="username">
+<label>Password</label>
+<input id="password" type="password" minlength="8" required autocomplete="new-password">
+<button type="submit">CREATE ACCOUNT</button>
+</form>
+<div class="switch">Already registered? <a onclick="showLogin()">Sign in</a></div>
+</div>
+
+<div id="message"></div>
+<div class="footer">BLACKWELL GROUP © 2026</div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const supabase = createClient(
+'https://jlbpczgyjeschedamcvz.supabase.co',
+'sb_publishable_jJf6sFbhFEiWHG68A-oztA_adFSDmUQ'
+);
+
+const message = document.getElementById('message');
+
+window.showRegister=()=>{
+document.getElementById('login').classList.add('hidden');
+document.getElementById('register').classList.remove('hidden');
+message.textContent='';
+};
+
+window.showLogin=()=>{
+document.getElementById('register').classList.add('hidden');
+document.getElementById('login').classList.remove('hidden');
+message.textContent='';
+};
+
+document.getElementById('registerForm').addEventListener('submit',async e=>{
+e.preventDefault();
+message.textContent='Creating account...';
+
+const fullName=document.getElementById('fullName').value.trim();
+const username=document.getElementById('username').value.trim().toLowerCase();
+const password=document.getElementById('password').value;
+
+const email=username+'@accounts.blackwell.local';
+
+const {data,error}=await supabase.auth.signUp({
+email,password,
+options:{data:{full_name:fullName,username}}
+});
+
+message.textContent=error?error.message:
+'Account created! Check your email if confirmation is required.';
+});
+
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+e.preventDefault();
+message.textContent='Signing in...';
+
+const username=document.getElementById('loginName').value.trim().toLowerCase();
+const password=document.getElementById('loginPassword').value;
+
+const {data,error}=await supabase.auth.signInWithPassword({
+email:username+'@accounts.blackwell.local',
+password
+});
+
+message.textContent=error?error.message:'Login successful! Dashboard coming soon.';
+});
+</script>
+</body>
+</html>
