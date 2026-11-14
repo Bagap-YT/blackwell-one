@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1012">
+  <meta name="description" content="BLACKWELL OPERATIONS — interne werkruimte voor voorraad, listings en verkoop.">
+  <title>BLACKWELL OPERATIONS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section id="loginScreen" class="auth-shell">
+    <div class="auth-orb auth-orb-one"></div><div class="auth-orb auth-orb-two"></div>
+    <div class="auth-brand"><div class="brand-mark">B</div><div><span>BLACKWELL</span><small>OPERATIONS</small></div></div>
+    <div class="auth-card">
+      <div class="auth-kicker"><span class="live-dot"></span> INTERNE TEAMRUIMTE</div>
+      <h1>Goed om je weer te zien.</h1>
+      <p class="auth-copy">Log in met je BLACKWELL teamaccount om verder te gaan.</p>
+      <form id="loginForm" autocomplete="on">
+        <label for="loginUsername">Gebruikersnaam</label>
+        <div class="field-wrap"><span class="field-icon">@</span><input id="loginUsername" name="username" type="text" autocomplete="username" placeholder="bijvoorbeeld bagap" required></div>
+        <label for="loginPassword">Wachtwoord</label>
+        <div class="field-wrap"><span class="field-icon">⌑</span><input id="loginPassword" name="password" type="password" autocomplete="current-password" placeholder="Je wachtwoord" required><button class="reveal-btn" type="button" data-reveal="loginPassword" aria-label="Toon wachtwoord">◉</button></div>
+        <button class="button button-primary button-wide" type="submit"><span>Inloggen</span><span class="button-arrow">↗</span></button>
+        <p id="loginError" class="form-error" role="alert"></p>
+      </form>
+      <div class="auth-foot"><span class="lock-icon">▣</span> Afgeschermd voor BLACKWELL teamleden</div>
+    </div>
+    <div class="auth-footer"><span>BLACKWELL COMPANY</span><span>INTERNAL SYSTEMS · 2026</span></div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="brand-lockup"><div class="brand-mark">B</div><div><div class="brand-title">BLACKWELL</div><div class="brand-caption">OPERATIONS</div></div></div>
+      <div class="workspace-chip"><span class="workspace-badge">✦</span><span><strong>Company workspace</strong><small>Teamomgeving</small></span><span class="chevron">⌄</span></div>
+      <nav class="main-nav" aria-label="Hoofdnavigatie">
+        <div class="nav-section-label">WERKRUIMTE</div>
+        <button class="nav-item active" data-page="overview"><span class="nav-symbol">◫</span><span>Overzicht</span><span class="nav-active-mark"></span></button>
+        <button class="nav-item" data-page="inventory"><span class="nav-symbol">▤</span><span>Producten & voorraad</span><span class="nav-count" id="navProductCount">0</span></button>
+        <button class="nav-item" data-page="listings"><span class="nav-symbol">↗</span><span>Listing drafts</span><span class="nav-count" id="navListingCount">0</span></button>
+        <button class="nav-item" data-page="sales"><span class="nav-symbol">◷</span><span>Verkoop & winst</span></button>
+        <button class="nav-item" data-page="tasks"><span class="nav-symbol">✓</span><span>Teamtaken</span><span class="nav-count" id="navTaskCount">0</span></button>
+        <div class="nav-section-label nav-gap">BEHEER</div>
+        <button class="nav-item admin-only hidden" data-page="team"><span class="nav-symbol">♧</span><span>Medewerkers</span></button>
+        <button class="nav-item" data-page="profile"><span class="nav-symbol">⚙</span><span>Mijn profiel</span></button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="secure-card"><span class="secure-icon">◈</span><div><strong>Beveiligde omgeving</strong><small>Alleen ingelogde teamleden</small></div><span class="secure-pulse"></span></div>
+        <div class="sidebar-user"><div class="avatar" id="sidebarAvatar">B</div><div class="user-meta"><strong id="sidebarName">BLACKWELL</strong><span id="sidebarRole">Team</span></div><button id="logoutButton" class="icon-button logout-icon" title="Uitloggen" aria-label="Uitloggen">↗</button></div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>BLACKWELL</span><span class="crumb-divider">/</span><strong id="breadcrumbCurrent">Overzicht</strong></div>
+        <div class="topbar-actions"><div class="sync-status"><span class="live-dot"></span><span>Live gesynchroniseerd</span></div><button class="icon-button" id="refreshButton" title="Ververs gegevens" aria-label="Ververs">⟳</button><button class="top-avatar" id="topAvatar">B</button></div>
+      </header>
+      <div id="pageContent" class="page-content"></div>
+    </main>
+  </div>
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
+
