@@ -203,8 +203,19 @@ function renderProfile() {
   <form id="profileForm"><div class="form-grid"><div><label class="field-label" for="profileName">Weergavenaam</label><input class="form-control" id="profileName" name="full_name" value="${esc(profile.full_name || '')}" required></div><div><label class="field-label">Gebruikersnaam</label><input class="form-control" value="${esc(profile.username)}" disabled></div><div><label class="field-label">Rol</label><input class="form-control" value="${isAdmin() ? 'Owner / Admin' : 'Medewerker'}" disabled></div><div><label class="field-label">Afdeling</label><input class="form-control" value="${esc(profile.department || 'Team')}" disabled></div></div>
   <label class="field-label" style="margin-top:19px">Profielkleur</label><div class="theme-pickers">${['gold','emerald','violet','blue'].map(theme => `<button class="theme-choice ${profile.profile_theme === theme ? 'selected' : ''}" type="button" data-theme-choice="${theme}" aria-label="${theme}" title="${theme}"></button>`).join('')}</div><input type="hidden" name="profile_theme" id="profileTheme" value="${esc(profile.profile_theme || 'gold')}">
   <div class="toggle-row"><div class="toggle-copy"><strong>Compacte weergave</strong><small>Toon tabellen met minder tussenruimte</small></div><button class="switch ${profile.compact_mode ? 'on' : ''}" id="compactSwitch" type="button" aria-pressed="${!!profile.compact_mode}"></button></div><input type="hidden" name="compact_mode" id="compactMode" value="${!!profile.compact_mode}">
-  <div style="margin-top:17px"><button class="button button-primary" type="submit">Wijzigingen opslaan</button></div></form></article>
-  <aside><div class="admin-note"><strong>${isAdmin() ? 'Owner-profiel' : 'Teamprofiel'}</strong>${isAdmin() ? 'Je hebt toegang tot medewerkersbeheer, productprijzen en alle verkoopgegevens.' : 'Je profielkleur en weergavenaam zijn alleen voor deze werkruimte. Je rol en toegangsrechten worden door de eigenaar beheerd.'}</div><div class="panel" style="margin-top:12px"><h2 class="panel-title">Accountbeveiliging</h2><p class="panel-subtitle" style="line-height:1.6;margin-top:8px">Je sessie is beveiligd met Supabase Auth. Bij verlies van toegang kan de eigenaar je wachtwoord opnieuw instellen vanuit Medewerkers.</p><button class="button button-quiet" data-action="logout" style="margin-top:12px">Uitloggen</button></div></aside></section>`;
+  <div class="inline-actions" style="margin-top:17px"><button class="button button-primary" type="submit">Wijzigingen opslaan</button><button class="button button-quiet" type="button" data-action="change-password">Wachtwoord wijzigen</button></div></form></article>
+  <aside><div class="admin-note"><strong>${isAdmin() ? 'Owner-profiel' : 'Teamprofiel'}</strong>${isAdmin() ? 'Je hebt toegang tot medewerkersbeheer, productprijzen en alle verkoopgegevens.' : 'Je profielkleur en weergavenaam zijn alleen voor deze werkruimte. Je rol en toegangsrechten worden door de eigenaar beheerd.'}</div><div class="panel" style="margin-top:12px"><h2 class="panel-title">Accountbeveiliging</h2><p class="panel-subtitle" style="line-height:1.6;margin-top:8px">Wijzig je wachtwoord hier wanneer je wilt. De eigenaar kan tijdelijke wachtwoorden voor medewerkers opnieuw instellen vanuit Medewerkers.</p><button class="button button-quiet" data-action="logout" style="margin-top:12px">Uitloggen</button></div></aside></section>`;
+}
+
+function passwordForm() {
+  const content = `<form id="passwordForm"><label class="field-label">Nieuw wachtwoord</label><input class="form-control" name="password" type="password" autocomplete="new-password" minlength="10" required><label class="field-label">Herhaal nieuw wachtwoord</label><input class="form-control" name="password_confirm" type="password" autocomplete="new-password" minlength="10" required><p class="modal-help">Gebruik minimaal 10 tekens en kies een wachtwoord dat je nergens anders gebruikt.</p></form>`;
+  modal('Wachtwoord wijzigen', 'Je account blijft ingelogd op dit apparaat.', content, `<button class="button button-quiet" type="button" data-close-modal>Annuleren</button><button class="button button-primary" type="submit" form="passwordForm">Wachtwoord opslaan</button>`);
+  $('#passwordForm').addEventListener('submit', async event => {
+    event.preventDefault(); const values = Object.fromEntries(new FormData(event.currentTarget).entries());
+    if (values.password !== values.password_confirm) { fail('De wachtwoorden zijn niet hetzelfde.'); return; }
+    try { const { error } = await supabase.auth.updateUser({ password: values.password }); if (error) throw error; closeModal(); toast('Je wachtwoord is gewijzigd.'); }
+    catch (error) { fail(error.message || 'Je wachtwoord kon niet worden gewijzigd.'); }
+  });
 }
 
 function productForm(product = null) {
@@ -318,6 +329,7 @@ document.addEventListener('click', async event => {
   if (action === 'add-sale') saleForm();
   if (action === 'add-task') taskForm();
   if (action === 'add-employee' && isAdmin()) employeeForm();
+  if (action === 'change-password') passwordForm();
   if (action === 'logout') await logout();
   const editProduct = event.target.closest('[data-edit-product]'); if (editProduct) productForm(getProduct(editProduct.dataset.editProduct));
   const removeProduct = event.target.closest('[data-delete-product]'); if (removeProduct && isAdmin()) await deleteProduct(removeProduct.dataset.deleteProduct);
